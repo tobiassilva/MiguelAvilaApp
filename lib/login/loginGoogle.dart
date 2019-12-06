@@ -48,7 +48,24 @@ Future<String> signInGoogle() async {
 
 
   final notesReference = FirebaseDatabase.instance.reference().child('userProfile/${user.uid}');
-  notesReference.update({'name': user.displayName, 'email': user.email, 'up': 0});
+  int up = 4;
+  String nome;
+  await notesReference.once().then((DataSnapshot snapshot){
+    print('snapshot: ${snapshot.value}');
+    if(snapshot.value != null){
+
+      up = snapshot.value['up'];
+
+    }
+    print(up);
+
+  });
+
+  print('UUUUUUUUPPPPPPPPP: $up');
+
+  if(up == 4){
+    notesReference.update({'name': user.displayName, 'email': user.email, 'up': 0});
+  }
 
 
 

@@ -705,6 +705,7 @@ class _cadastroPageState extends State<cadastroPage> {
     final notesReference = FirebaseDatabase.instance.reference().child('userProfile/${user.uid}');
     notesReference.update({
       'name': formNome.text,
+      'email': formEmail.text,
       'tel': formTel.text,
       'cep': formCEP.text,
       'logradouro': formLogradouro.text,
