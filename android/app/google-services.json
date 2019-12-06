@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "527669179119",
+    "firebase_url": "https://miguel-avila.firebaseio.com",
+    "project_id": "miguel-avila",
+    "storage_bucket": "miguel-avila.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527669179119:android:24c941f7d712685a2c211a",
+        "android_client_info": {
+          "package_name": "br.com.miguelavila.miguel_avila_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527669179119-ckgr0m9isdevh7c35a15mif4fa9jage1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.miguelavila.miguel_avila_app",
+            "certificate_hash": "b282fcbdff1ade48053494397fe4d858bfc1bbf0"
+          }
+        },
+        {
+          "client_id": "527669179119-qe126eemiaid7k2rkeb45kuaju6tdq1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnNYwPQbrSoHTNU4LXW4Q6SUVGuCJHUGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527669179119-qe126eemiaid7k2rkeb45kuaju6tdq1l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
