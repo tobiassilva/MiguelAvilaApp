@@ -52,6 +52,8 @@ Future<String> signInGoogle() async {
   String nome;
   await notesReference.once().then((DataSnapshot snapshot){
     print('snapshot: ${snapshot.value}');
+
+    ///Se ja tiver logado, mas nao completou o cadastro
     if(snapshot.value != null){
 
       up = snapshot.value['up'];

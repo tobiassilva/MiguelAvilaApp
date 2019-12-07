@@ -23,7 +23,7 @@ class _homePageState extends State<homePage> {
   }
 
   var user;
-  var cadastro;
+  int cadastro;
   var email;
   var displayname;
 
@@ -53,7 +53,7 @@ class _homePageState extends State<homePage> {
     print('aqui');
     if (cadastro == 0) { ///Se nao tiver realizado cadastro ainda
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => cadastroPage())
+        MaterialPageRoute(builder: (context) => cadastroPage(cadastro))
       );
       print('NÃO POSSUI CADASTRO');
     }

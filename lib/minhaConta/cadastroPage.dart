@@ -10,15 +10,23 @@ import 'package:flutter_correios/flutter_correios.dart';
 import 'package:flutter_correios/model/resultado_cep.dart';
 import 'package:miguel_avila_app/globals.dart' as globals;
 import 'package:miguel_avila_app/home/home_page.dart';
+import 'package:miguel_avila_app/tabs/appBar.dart';
 
 
 
 class cadastroPage extends StatefulWidget {
+  int up;
+  cadastroPage(this.up);
   @override
-  _cadastroPageState createState() => _cadastroPageState();
+  _cadastroPageState createState() => _cadastroPageState(up);
 }
 
 class _cadastroPageState extends State<cadastroPage> {
+
+  int up;
+  _cadastroPageState(this.up);
+
+  bool leuBanco = false;
 
   final GlobalKey<ScaffoldState> _scaffoldState = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = new GlobalKey<FormState>();
@@ -35,12 +43,50 @@ class _cadastroPageState extends State<cadastroPage> {
   final formNumero = TextEditingController();
   final formCompl = TextEditingController();
 
-  var textLogradouro = '';
-  var textBairro = '';
-  var textCidade = '';
-  var textEstado = '';
 
   int statusCEP = 0;
+
+
+  void initState(){
+    super.initState();
+
+    recebeDados();
+
+  }
+
+  var user;
+  Future<FirebaseUser> recebeDados() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+
+    user = await _auth.currentUser();
+
+    final dadosFirebase =  FirebaseDatabase.instance.reference().child('userProfile/${user.uid}');
+
+    await dadosFirebase.once().then((DataSnapshot snapshot) {
+
+      setState(() {
+        formEmail.text = snapshot.value['email'];
+        formNome.text = snapshot.value['name'];
+
+        if(snapshot.value['up'] == 1){
+          formBairro.text = snapshot.value['bairro'];
+          formCidade.text = snapshot.value['cidade'];
+          formCompl.text = snapshot.value['complemento'];
+          formEstado.text = snapshot.value['estado'];
+          formLogradouro.text = snapshot.value['logradouro'];
+          formNumero.text = snapshot.value['numero'];
+          formTel.text = snapshot.value['tel'];
+          formCEP.text = snapshot.value['cep'];
+
+
+        }
+      });
+    });
+
+    print(formBairro.text);
+    leuBanco = true;
+    return user;
+}
 
   String _campoVazio(String value) {
     if (value.isEmpty) {
@@ -102,20 +148,20 @@ class _cadastroPageState extends State<cadastroPage> {
               ///TODO: VERIFICAR QUANDO O VALOR FOR NULL. EX.: CEP 37507000
               //LOGRADOURO
               print(formLogradouro.text);
-              textLogradouro = jsonCep.logradouro.toString(); // valor que será mostrado no textField
+              //textLogradouro = jsonCep.logradouro.toString(); // valor que será mostrado no textField
               formLogradouro.text = jsonCep.logradouro.toString(); // Atualiza Controlador
               print('LOGRADOURO: ${formLogradouro.text}');
 
               //BAIRRO
-              textBairro = jsonCep.bairro.toString(); // valor que será mostrado no textField
+              //textBairro = jsonCep.bairro.toString(); // valor que será mostrado no textField
               formBairro.text = jsonCep.bairro.toString(); // Atualiza Controlador
 
               //CIDADE
-              textCidade = jsonCep.cidade.toString(); // valor que será mostrado no textField
+              //textCidade = jsonCep.cidade.toString(); // valor que será mostrado no textField
               formCidade.text = jsonCep.cidade.toString(); // Atualiza Controlador
 
               //ESTADO
-              textEstado = jsonCep.estado.toString(); // valor que será mostrado no textField
+              //textEstado = jsonCep.estado.toString(); // valor que será mostrado no textField
               formEstado.text = jsonCep.estado.toString(); // Atualiza Controlador
               statusCEP = 1;
             });
@@ -123,10 +169,10 @@ class _cadastroPageState extends State<cadastroPage> {
         } else {
           print('NAO  EXISTE');
           setState(() {
-            textLogradouro = '';
+            /*textLogradouro = '';
             textBairro = '';
             textCidade = '';
-            textEstado = '';
+            textEstado = '';*/
 
             formEstado.text = '';
             formBairro.text = '';
@@ -161,18 +207,26 @@ class _cadastroPageState extends State<cadastroPage> {
           backgroundColor: globals.corPrimaria,
           centerTitle: true,
         ),
-        body: Container(
+        body: leuBanco == false ? Column(
+          children: <Widget>[
+            Expanded(child: Center(child: globals.loading()))
+          ],
+        ) : Container(
           /*decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage('assets/images/img_fundo.jpeg', ),
               fit: BoxFit.cover
             ),
           ),*/
-          padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Form(
             key: formKey,
             child: ListView(
               children: <Widget>[
+                Divider(
+                  height: 15,
+                  color: Colors.transparent,
+                ),
                 Column(
                   children: <Widget>[
                     new Container(
@@ -651,42 +705,74 @@ class _cadastroPageState extends State<cadastroPage> {
 
                 ///TODO: FAZER A VALIDAÇÃO
 
-                 FlatButton(
-                    onPressed: () async {
-                      if (formKey.currentState.validate()) {
-                          setState(() {
-                            print('Válido');
-                            enviaDados();
-                          });
+                 Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   mainAxisSize: MainAxisSize.max,
+                   children: <Widget>[
+                     ///Voltar
+                     FlatButton(
+                         onPressed: (){
+                           Navigator.of(context).pop();
+                         },
+                         child: Row(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: <Widget>[
+                             Icon(FontAwesomeIcons.arrowLeft, color: globals.corTexto,),
+                             Padding(
+                               padding: EdgeInsets.only(left: 10),
+                               child: Text('Voltar', style: TextStyle(
+                                   color: globals.corTexto,
+                                   fontSize: 15
+                               ),),
+                             ),
+                           ],
+                         )
+                     ),
+                     FlatButton(
+                        onPressed: () async {
+                          if (formKey.currentState.validate()) {
+                              setState(() {
+                                print('Válido');
+                                enviaDados();
+                              });
 
-                      } else {
-                        _scaffoldState.currentState.showSnackBar(SnackBar(
-                            content: Text(
-                                'Formulário Incorreto, Verifique os Campos!')));
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      width: 150,
-                      //padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                      //margin: EdgeInsets.only(left: 50, right: 20, bottom: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(30),
-                        //border: Border.all(color: Color.fromRGBO(0, 185, 255, 1), width: 1.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Icon(FontAwesomeIcons.check, color: Colors.white,),
-                          Text(
-                            'SALVAR',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          } else {
+                            _scaffoldState.currentState.showSnackBar(SnackBar(
+                                content: Text(
+                                    'Formulário Incorreto, Verifique os Campos!')));
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          width: 150,
+                          //padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                          //margin: EdgeInsets.only(left: 50, right: 20, bottom: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(30),
+                            //border: Border.all(color: Color.fromRGBO(0, 185, 255, 1), width: 1.0),
                           ),
-                        ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Icon(FontAwesomeIcons.check, color: Colors.white,),
+                              Text(
+                                'SALVAR',
+                                style: TextStyle(fontSize: 18, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                   ],
+                 ),
+
+                Divider(
+                  height: 15,
+                  color: Colors.transparent,
+                ),
+
+
               ],
             ),
           ),
@@ -698,7 +784,6 @@ class _cadastroPageState extends State<cadastroPage> {
 
 
 
-  var user;
   Future<FirebaseUser> enviaDados() async {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     user = await _auth.currentUser();
