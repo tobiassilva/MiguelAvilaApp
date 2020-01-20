@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miguel_avila_app/globals.dart' as globals;
 import 'package:miguel_avila_app/minhaConta/cadastroPage.dart';
 import 'package:miguel_avila_app/tabs/appBar.dart';
@@ -28,23 +29,44 @@ class _homePageState extends State<homePage> {
   var displayname;
 
   Future<FirebaseUser> verificaCadastro() async {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
 
-    user = await _auth.currentUser();
-    print(user.uid);
+    var coneccao = await globals.funcConeccao();
 
-    final notesReference = FirebaseDatabase.instance.reference().child('userProfile/${user.uid}');
+    if(coneccao == false){
+      final FirebaseAuth _auth = FirebaseAuth.instance;
 
-    notesReference.once().then((DataSnapshot snapshot){
-      cadastro = snapshot.value['up'];
-      email = snapshot.value['email'];
-      displayname = snapshot.value['name'];
-      print(cadastro);
-      print(email);
-      print(displayname);
+      user = await _auth.currentUser();
+      print('HOMMMMEEEEEE');
+      print(user.uid);
 
-      verifica();
-    });
+
+      final notesReference = FirebaseDatabase.instance.reference().child('userProfile/${user.uid}');
+
+      notesReference.once().then((DataSnapshot snapshot) async {
+        cadastro = await snapshot.value['up'];
+        email = snapshot.value['email'];
+        displayname = snapshot.value['name'];
+        print(cadastro);
+        print(email);
+        print(displayname);
+
+
+
+        verifica();
+
+        setState(() {
+          globals.carregando = false;
+        });
+      });
+    } else {
+      setState(() {
+        globals.carregando = false;
+      });
+      print('NAO TEM INTERNET');
+    }
+
+
+
   }
 
   Future<void> verifica() {
@@ -66,7 +88,9 @@ class _homePageState extends State<homePage> {
         backgroundColor: globals.corSecundaria,
         key: scaffoldKey,
         drawer: menuLateral(),
-        body: Container(
+        body: globals.carregando == true ? SpinKitFadingCube(
+          color: globals.corPrimaria,
+        ) : Container(
           color: globals.corSecundaria,
           child: Column(
            children: <Widget>[

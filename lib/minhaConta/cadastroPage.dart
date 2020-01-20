@@ -706,10 +706,12 @@ class _cadastroPageState extends State<cadastroPage> {
                 ///TODO: FAZER A VALIDAÇÃO
 
                  Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   mainAxisAlignment: up == 0 ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
                    mainAxisSize: MainAxisSize.max,
                    children: <Widget>[
                      ///Voltar
+                     up == 0
+                         ? Container():
                      FlatButton(
                          onPressed: (){
                            Navigator.of(context).pop();
@@ -802,9 +804,131 @@ class _cadastroPageState extends State<cadastroPage> {
       'up': 1,
     });
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => homePage())
-    );
+    _confirmaEnvio();
+
+
     return user;
   }
+
+  Future<bool> _onWillPop() {
+    Navigator.of(context).pop(false);
+    print("Teste");
+  }
+
+  Future<void> _confirmaEnvio() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return MaterialApp(
+          home: WillPopScope(
+            onWillPop: _onWillPop,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                  height: MediaQuery.of(context).size.height/1.6,
+                  decoration: new BoxDecoration(
+                      color: Colors.white,
+                      border: new Border.all(
+                        width: 1.0,
+                        color: Colors.transparent,
+                      ),
+                      borderRadius:
+                      new BorderRadius.all(new Radius.circular(20.0))),
+                  child: Column(
+                    children: <Widget>[
+
+                      ///TODO: TIRAR
+                      /*Container(
+                        height: 40,
+                        padding: EdgeInsets.only(right: 15),
+                        decoration: new BoxDecoration(
+                            color: globals.corPrimaria,
+                            borderRadius: new BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Icon(
+                                  IconData(57676, fontFamily: 'MaterialIcons')),
+                            )
+                          ],
+                        ),
+                      ),*/
+
+
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+
+                              Icon(FontAwesomeIcons.checkCircle, size: 150, color: Colors.green,),
+
+                              Row(
+                                children: <Widget>[
+                                  Flexible(
+                                      child: Text(
+                                        'Dados Salvos com Sucesso!',
+                                        style: TextStyle(
+                                            fontSize: 24, color: globals.corPrimaria,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      )),
+                                ],
+                              ),
+
+                              FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(builder: (context) => homePage())
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                  width: 150,
+                                  //padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                                  //margin: EdgeInsets.only(left: 50, right: 20, bottom: 3),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(30),
+                                    //border: Border.all(color: Color.fromRGBO(0, 185, 255, 1), width: 1.0),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Text(
+                                        'FECHAR',
+                                        style: TextStyle(fontSize: 18, color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }

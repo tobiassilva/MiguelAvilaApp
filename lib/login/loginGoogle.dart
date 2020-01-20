@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:miguel_avila_app/globals.dart' as globals;
+import 'package:miguel_avila_app/home/home_page.dart';
 
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -79,4 +82,48 @@ void signOutGoogle() async{
   await googleSignIn.signOut();
 
   print('Usuario deslogou com o Google');
+}
+
+
+Widget buttonGoogle(context){
+  return FlatButton(
+    onPressed: (){
+      signInGoogle().whenComplete((){
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) {
+              return homePage();
+            },
+          ),
+        );
+      }
+      );
+    },
+    child: Container(
+      padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        border: Border.all(color: Colors.red, width: 1),
+        color: Colors.red
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(FontAwesomeIcons.google, color: Colors.white,
+            size: 40,
+          ),
+          /*Image(image: AssetImage('assets/images/google_logo.png'), height: 35,),
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: Text('Logar com\nGoogle',
+              style: TextStyle(
+                color: globals.corTexto,
+                fontSize: 16,
+              ),
+            ),
+          ),*/
+        ],
+      ),
+    ),
+  );
 }
